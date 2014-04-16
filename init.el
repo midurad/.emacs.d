@@ -138,3 +138,6 @@
                  (use-package powerline
                    :init (powerline-evil-theme)))
   :ensure t)
+
+(use-package magit
+  :ensure t)
