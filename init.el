@@ -139,5 +139,10 @@
                    :init (powerline-evil-theme)))
   :ensure t)
 
+(use-package org
+  :defer t
+  :init (add-to-list 'auto-mode-alist '("\\.org$". org-mode))
+  :ensure t)
+
 (use-package magit
   :ensure t)
