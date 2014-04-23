@@ -22,12 +22,19 @@
   (unless (package-installed-p package)
     (package-install package)))
 
-(require 'use-package)
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-;; some packages I like are not in the repos
-(use-package el-get
-  :config (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-  :ensure t)
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
+(el-get 'sync)
+
+(require 'use-package)
 
 ;; starter-kit
 (use-package graphene
@@ -123,15 +130,15 @@
   :ensure t)
 
 (use-package evil
-  :init (evil-mode 1)
   :config (progn
-          (setq el-get-sources
-                '((:name powerline :type github :pkgname "Dewdrops/powerline"))
-                )
-          (el-get 'sync 'powerline)
-          (use-package powerline
-            :init (powerline-evil-theme))
-          )
+            (evil-mode)
+            (setq el-get-sources
+                  '((:name powerline :type github :pkgname "Dewdrops/powerline"))
+                  )
+            (el-get 'sync 'powerline)
+            (use-package powerline
+              :init (powerline-evil-theme))
+            )
   :ensure t)
 
 (use-package org
