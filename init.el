@@ -7,10 +7,10 @@
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 
-;; activate all the packages
+;; activate the package system
 (package-initialize)
 
-;; fetch the list of packages available
+;; fetch the list of available packages
 (unless package-archive-contents
   (package-refresh-contents))
 
@@ -24,6 +24,12 @@
 
 (require 'use-package)
 
+;; some packages I like are not in the repos
+(use-package el-get
+  :config (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+  :ensure t)
+
+;; starter-kit
 (use-package graphene
   :ensure t)
 
@@ -104,17 +110,6 @@
 (use-package cl-lib
   :ensure t)
 
-;; (use-package god-mode
-;;   :init (progn
-;;           (global-set-key (kbd "<escape>") 'god-local-mode)
-;;           (defun god-update-cursor ()
-;;             (setq cursor-type (if (or god-local-mode buffer-read-only)
-;;                                   'box
-;;                                 'bar)))
-;;           (add-hook 'god-mode-enabled-hook 'god-update-cursor)
-;;           (add-hook 'god-mode-disabled-hook 'god-update-cursor))
-;;   :ensure t)
-
 (use-package info+
   :ensure t)
 
@@ -127,16 +122,16 @@
                (global-set-key (kbd "C-9") 'er/contract-region))
   :ensure t)
 
-(unless (require 'quelpa nil t)
-  (with-temp-buffer
-    (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
-    (eval-buffer)))
-
 (use-package evil
   :init (evil-mode 1)
-  :config (progn (quelpa '(powerline :fetcher github :repo "Dewdrops/powerline"))
-                 (use-package powerline
-                   :init (powerline-evil-theme)))
+  :config (progn
+          (setq el-get-sources
+                '((:name powerline :type github :pkgname "Dewdrops/powerline"))
+                )
+          (el-get 'sync 'powerline)
+          (use-package powerline
+            :init (powerline-evil-theme))
+          )
   :ensure t)
 
 (use-package org
@@ -146,3 +141,4 @@
 
 (use-package magit
   :ensure t)
+
