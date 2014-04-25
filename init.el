@@ -141,6 +141,15 @@
             )
   :ensure t)
 
+(use-package scala-mode2
+  :config (progn
+            (scala-mode)
+            (use-package ensime
+              :init (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+              :ensure t)
+            )
+  :ensure t)
+
 (use-package org
   :defer t
   :init (add-to-list 'auto-mode-alist '("\\.org$". org-mode))
