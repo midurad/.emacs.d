@@ -164,7 +164,9 @@
   :config (progn
             (evil-mode)
             (setq el-get-sources
-                  '((:name powerline :type github :pkgname "Dewdrops/powerline"))
+                  '((:name powerline
+                           :type github
+                           :pkgname "Dewdrops/powerline"))
                   )
             (el-get 'sync 'powerline)
             (use-package powerline
@@ -174,13 +176,18 @@
 
 (use-package scala-mode2
   :mode ("\\.scala\\'" . scala-mode)
-  ;; :config (use-package ensime
-  ;;           :init (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-  ;;           :ensure t)
+  :config (progn
+            (setq el-get-sources
+                  '((:name ensime
+                           :type github
+                           :pkgname "aemoncannon/ensime-original"
+                           :build '(("sbt" "update" "stage"))
+                           :load-path "./dist/elisp/")))
+            (el-get 'sync 'ensime)
+            (use-package ensime
+              :init (progn
+                      (add-hook 'scala-mode-hook 'ensime-scala-mode-hook))))
   :ensure t)
-
-(add-to-list 'load-path "~/.emacs.d/ensime/elisp/")
-(require 'ensime)
 
 ;; This step causes the ensime-mode to be started whenever
 ;; scala-mode is started for a buffer. You may have to customize this step
