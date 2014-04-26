@@ -142,12 +142,10 @@
   :ensure t)
 
 (use-package scala-mode2
-  :config (progn
-            (scala-mode)
-            (use-package ensime
-              :init (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-              :ensure t)
-            )
+  :mode ("\\.scala\\'" . scala-mode)
+  :config (use-package ensime
+            :init (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+            :ensure t)
   :ensure t)
 
 (use-package org
