@@ -1,65 +1,3 @@
-;; line highlight ON
-(require 'highlight-current-line)
-(highlight-current-line-on t)
-
-;; blinking cursor ON
-(blink-cursor-mode t)
-
-;; change colors of the whitespace mode
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(highlight-current-line-face ((t (:background "gray22"))))
- '(whitespace-indentation ((t (:background "gray13" :foreground "#CC5542"))) t)
- '(whitespace-space ((t (:background "gray13" :foreground "white smoke"))) t))
-
-;; scroll by a single line up 
-(defun scroll-up-one-line()
-  (interactive)
-  (scroll-up 1))
-
-(global-set-key (kbd "C-.") 'scroll-up-one-line)
-
-;; scroll by a single line down 
-(defun scroll-down-one-line()
-  (interactive)
-  (scroll-down 1))
-
-(global-set-key (kbd "C-,") 'scroll-down-one-line)
-
-;; define "previous window" function
-(defun other-window-backward (&optional n)
-  "Select Nth previous window."
-  (interactive "P")
-  (other-window (- (prefix-numeric-value n))))
-
-;; now redefine few key bindings
-(global-set-key (kbd "C-x C-p") 'other-window-backward)
-(global-set-key (kbd "C-x C-n") 'other-window)
-
-(defun move-point-to-top ()
-  "Put point on top line of the window."
-  (interactive)
-  (move-to-window-line 0))
-
-(global-set-key (kbd "M-,") 'move-point-to-top)
-
-(defun move-point-to-bottom ()
-  "Put point on the botton line of the window."
-  (interactive)
-  (move-to-window-line -1))
-
-(global-set-key (kbd "M-.") 'move-point-to-bottom)
-
-(defun move-line-to-top ()
-  "Move current line to top of the window."
-  (interactive)
-  (recenter 0))
-
-(global-set-key (kbd "M-!") 'move-line-to-top)
-
 ;; initialize the packages
 (require 'package)
 
@@ -102,6 +40,13 @@
 (use-package graphene
   :ensure t)
 
+(use-package yasnippet
+  :ensure t)
+
+(use-package find-file-in-repository
+  :bind ("<f7>" . find-file-in-repository)
+  :ensure t)
+
 (use-package hideshow-org
   :ensure t
   :init (progn
@@ -110,12 +55,21 @@
           (add-hook 'java-mode-hook (lambda () (hs-minor-mode 1)))
           (add-hook 'lisp-mode-hook (lambda () (hs-minor-mode 1)))))
 
-(use-package python
+(use-package python-mode
   :mode ("\\.py\\'" . python-mode)
   :config (progn
-	    (use-package elpy
-	      :config (elpy-enable)
-	      :ensure t)))
+            (add-hook 'python-mode-hook 'yas-minor-mode)
+            (use-package jedi
+              :config (progn
+                        (add-hook 'python-mode-hook
+                                  (lambda ()
+                                    (jedi:setup)
+                                    (jedi:ac-setup)))
+                        (use-package python-environment
+                          :ensure t)
+)
+              :ensure t))
+  :ensure t)
 
 (use-package ample-zen-theme
   :ensure t)
@@ -161,6 +115,7 @@
   :ensure t)
 
 (use-package evil
+  :disabled t
   :config (progn
             (evil-mode)
             (setq el-get-sources
@@ -202,3 +157,103 @@
 (use-package magit
   :ensure t)
 
+(use-package projectile
+  :init (projectile-global-mode)
+  :ensure t)
+
+(use-package company
+  :init (add-hook 'after-init-hook 'global-company-mode)
+  :ensure t)
+
+(use-package eclim
+  :init (progn
+          (require 'eclim)
+          (global-eclim-mode)
+          (require 'eclimd)
+          (require 'ac-emacs-eclim-source)
+          (ac-emacs-eclim-config)
+          (require 'company-emacs-eclim)
+          (company-emacs-eclim-setup)
+          (global-company-mode))
+  :ensure emacs-eclim)
+
+(use-package powerline
+  :init (powerline-vim-theme)
+  :ensure t)
+
+(use-package god-mode
+  :init (progn
+          (defun init-modeline ()
+            (set-face-attribute 'mode-line nil :background "#0a0a0a"))
+          (defun god-modeline ()
+            (if (or god-local-mode buffer-read-only)
+                (set-face-attribute 'mode-line nil :background "#642EFE")
+              (init-modeline)))
+          (add-hook 'god-mode-enabled-hook 'god-modeline)
+          (add-hook 'god-mode-disabled-hook 'init-modeline)
+          (global-set-key (kbd "<escape>") 'god-local-mode)
+          (define-key god-local-mode-map (kbd "z") 'repeat)
+          (add-to-list 'god-exempt-major-modes 'dired-mode))
+  :ensure t)
+
+;; line highlight ON
+(require 'highlight-current-line)
+(highlight-current-line-on t)
+
+;; blinking cursor ON
+(blink-cursor-mode t)
+
+;; change colors of the whitespace mode
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(highlight-current-line-face ((t (:background "gray22"))))
+ '(whitespace-indentation ((t (:background "gray13" :foreground "#CC5542"))) t)
+ '(whitespace-space ((t (:foreground unspecified :background unspecified :inherit highlight))) t))
+
+;; scroll by a single line up 
+(defun scroll-up-one-line()
+  (interactive)
+  (scroll-up 1))
+
+(global-set-key (kbd "C-.") 'scroll-up-one-line)
+
+;; scroll by a single line down 
+(defun scroll-down-one-line()
+  (interactive)
+  (scroll-down 1))
+
+(global-set-key (kbd "C-,") 'scroll-down-one-line)
+
+;; define "previous window" function
+(defun other-window-backward (&optional n)
+  "Select Nth previous window."
+  (interactive "P")
+  (other-window (- (prefix-numeric-value n))))
+
+;; now redefine few key bindings
+(global-set-key (kbd "C-x C-p") 'other-window-backward)
+(global-set-key (kbd "C-x C-n") 'other-window)
+
+(defun move-point-to-top ()
+  "Put point on top line of the window."
+  (interactive)
+  (move-to-window-line 0))
+
+(global-set-key (kbd "M-,") 'move-point-to-top)
+
+(defun move-point-to-bottom ()
+  "Put point on the botton line of the window."
+  (interactive)
+  (move-to-window-line -1))
+
+(global-set-key (kbd "M-.") 'move-point-to-bottom)
+
+(defun move-line-to-top ()
+  "Move current line to top of the window."
+  (interactive)
+  (recenter 0))
+
+(global-set-key (kbd "M-!") 'move-line-to-top)
