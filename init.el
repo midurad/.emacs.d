@@ -184,9 +184,9 @@
 (use-package god-mode
   :init (progn
           (defun update-cursor ()
-            (set-cursor-color (if (or god-local-mode buffer-read-only)
-                                  "#ffffff"
-                                "#cc8512")))
+            (setq cursor-type (if (or god-local-mode buffer-read-only)
+                                  'hollow
+                                'box)))
           (add-hook 'god-mode-enabled-hook 'update-cursor)
           (add-hook 'god-mode-disabled-hook 'update-cursor)
           (global-set-key (kbd "<escape>") 'god-local-mode)
