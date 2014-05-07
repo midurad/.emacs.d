@@ -178,19 +178,17 @@
   :ensure emacs-eclim)
 
 (use-package powerline
-  :init (powerline-vim-theme)
+  :init (powerline-default-theme)
   :ensure t)
 
 (use-package god-mode
   :init (progn
-          (defun init-modeline ()
-            (set-face-attribute 'mode-line nil :background "#0a0a0a"))
-          (defun god-modeline ()
-            (if (or god-local-mode buffer-read-only)
-                (set-face-attribute 'mode-line nil :background "#642EFE")
-              (init-modeline)))
-          (add-hook 'god-mode-enabled-hook 'god-modeline)
-          (add-hook 'god-mode-disabled-hook 'init-modeline)
+          (defun update-cursor ()
+            (set-cursor-color (if (or god-local-mode buffer-read-only)
+                                  "#ffffff"
+                                "#cc8512")))
+          (add-hook 'god-mode-enabled-hook 'update-cursor)
+          (add-hook 'god-mode-disabled-hook 'update-cursor)
           (global-set-key (kbd "<escape>") 'god-local-mode)
           (define-key god-local-mode-map (kbd "z") 'repeat)
           (add-to-list 'god-exempt-major-modes 'dired-mode))
