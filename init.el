@@ -52,7 +52,7 @@
   :init (progn
           (add-hook 'c++-mode-hook (lambda () (progn (hs-minor-mode 1) (hs-org/minor-mode 1))))
           (add-hook 'c-mode-hook (lambda () (hs-minor-mode 1)))
-          (add-hook 'java-mode-hook (lambda () (hs-minor-mode 1)))
+          (add-hook 'java-mode-hook (lambda () (progn (hs-minor-mode 1) (hs-org/minor-mode 1))))
           (add-hook 'lisp-mode-hook (lambda () (hs-minor-mode 1)))))
 
 (use-package python-mode
@@ -167,9 +167,11 @@
 
 (use-package eclim
   :init (progn
-          (require 'eclim)
           (global-eclim-mode)
           (require 'eclimd)
+          (setq eclimd-executable "/opt/eclipse/eclimd")
+          (setq eclim-executable "/opt/eclipse/eclim")
+          (setq eclimd-default-workspace "/mnt/storage/Coding/eclim_workspace/")
           (require 'ac-emacs-eclim-source)
           (ac-emacs-eclim-config)
           (require 'company-emacs-eclim)
@@ -181,17 +183,17 @@
   :init (powerline-default-theme)
   :ensure t)
 
-(use-package god-mode
+(use-package expand-region
   :init (progn
-          (defun update-cursor ()
-            (setq cursor-type (if (or god-local-mode buffer-read-only)
-                                  'hollow
-                                'box)))
-          (add-hook 'god-mode-enabled-hook 'update-cursor)
-          (add-hook 'god-mode-disabled-hook 'update-cursor)
-          (global-set-key (kbd "<escape>") 'god-local-mode)
-          (define-key god-local-mode-map (kbd "z") 'repeat)
-          (add-to-list 'god-exempt-major-modes 'dired-mode))
+          (global-set-key (kbd "C-=") 'er/expand-region)
+          (global-set-key (kbd "C--")
+                          (lambda ()
+                            (interactive)
+                            (er/expand-region -1))))
+  :ensure t)
+
+(use-package ace-jump-mode
+  :init (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
   :ensure t)
 
 ;; line highlight ON
@@ -207,7 +209,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(highlight-current-line-face ((t (:background "gray22"))))
+ '(highlight-current-line-face ((t (:background "gray15"))))
  '(whitespace-indentation ((t (:background "gray13" :foreground "#CC5542"))) t)
  '(whitespace-space ((t (:foreground unspecified :background unspecified :inherit highlight))) t))
 
@@ -255,3 +257,22 @@
   (recenter 0))
 
 (global-set-key (kbd "M-!") 'move-line-to-top)
+
+(use-package god-mode
+  :init (progn
+          (defun update-cursor ()
+            (setq cursor-type (if (or god-local-mode buffer-read-only)
+                                  'hollow
+                                'box)))
+          (add-hook 'god-mode-enabled-hook 'update-cursor)
+          (add-hook 'god-mode-disabled-hook 'update-cursor)
+          (global-set-key (kbd "<escape>") 'god-local-mode)
+          (define-key god-local-mode-map (kbd "z") 'repeat)
+          (add-to-list 'god-exempt-major-modes 'dired-mode))
+  :ensure t)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(compilation-environment (quote ("CLASSPATH=/mnt/storage/Coding/Coursera/algorithms_2"))))
