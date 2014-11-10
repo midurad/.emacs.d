@@ -3,9 +3,10 @@
 
 ;; list the repositories to use
 ;; note: elpa.gnu.org times out so is not included
-(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "http://melpa.milkbox.net/packages/")
+                         ("ELPA" . "http://tromey.com/elpa/")))
 
 ;; activate the package system
 (package-initialize)
@@ -162,10 +163,13 @@
   :ensure t)
 
 (use-package company
-  :init (add-hook 'after-init-hook 'global-company-mode)
+  :disabled t
+  :init (progn (add-hook 'after-init-hook 'global-company-mode)
+               (setq company-backends '(company-ropemacs)))
   :ensure t)
 
 (use-package eclim
+  :disabled t
   :init (progn
           (global-eclim-mode)
           (require 'eclimd)
